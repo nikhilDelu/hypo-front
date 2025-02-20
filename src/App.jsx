@@ -33,10 +33,6 @@ export default function App() {
       alert(`🏆 Winner: ${winnerUsername} (Prize: ${totalPoints} points)`);
     });
 
-    socket.on("timerUpdate", ({ remainingTime }) => {
-      setRemainingTime(remainingTime);
-    });
-
     socket.on("quizEnded", ({ message }) => {
       alert(message); // Show quiz end alert
       setRemainingTime(null); // Reset the timer display
@@ -67,32 +63,54 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-2xl font-bold mb-4">🎮 Quiz Room App</h1>
+    <div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <h1 className="text-2xl font-bold mb-4">🎮 Quiz Room App</h1>
 
-      <input
-        type="text"
-        placeholder="Enter username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="border p-2 rounded mb-2"
-      />
+        <input
+          type="text"
+          placeholder="Enter username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="border p-2 rounded mb-2"
+        />
 
-      <button
-        onClick={createRoom}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-      >
-        Create Room
-      </button>
+        <button
+          onClick={createRoom}
+          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        >
+          Create Room
+        </button>
 
-      {inviteLink && (
-        <div className="mb-4">
-          <p>Invite Link:</p>
-          <a href={inviteLink} className="text-blue-600">
-            {inviteLink}
-          </a>
-        </div>
-      )}
+        <h2 className="text-xl font-bold mt-6">Players:</h2>
+        <ul className="list-disc">
+          {players &&
+            players.map((player, index) => <li key={index}>{player}</li>)}
+        </ul>
+
+        {totalPoints > 0 && (
+          <p className="mt-4">💰 Prize Pool: {totalPoints} points</p>
+        )}
+
+        {/* Quiz Timer */}
+        {remainingTime !== null && <h2>Time Left: {remainingTime}s</h2>}
+
+        {/* Start Quiz Button (Only Host Should Start) */}
+        <button onClick={startQuiz}>Start Quiz</button>
+
+        {players && players.length > 0 && (
+          <button
+            onClick={declareWinner}
+            className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+          >
+            Declare Winner
+          </button>
+        )}
+
+        {winner && (
+          <p className="text-green-500 font-bold mt-4">🏆 Winner: {winner}</p>
+        )}
+      </div>
 
       <input
         type="text"
