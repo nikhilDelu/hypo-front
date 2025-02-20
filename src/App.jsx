@@ -34,7 +34,6 @@ export default function App() {
           setRemainingTime(remainingTime);
       });
 
-
         socket.on("quizEnded", ({ message }) => {
           alert(message);  // Show quiz end alert
           setRemainingTime(null); // Reset the timer display
@@ -93,7 +92,6 @@ export default function App() {
             </ul>
 
             {totalPoints > 0 && <p className="mt-4">💰 Prize Pool: {totalPoints} points</p>}
-
 
             {/* Quiz Timer */}
             {remainingTime !== null && <h2>Time Left: {remainingTime}s</h2>}
