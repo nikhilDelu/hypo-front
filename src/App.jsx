@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-
+import Quiz from "./Quiz";
 const socket = io("http://localhost:5000");
 
 export default function App() {
@@ -12,6 +12,7 @@ export default function App() {
     const [totalPoints, setTotalPoints] = useState(0);
     const [winner, setWinner] = useState("");
     const [remainingTime, setRemainingTime] = useState(null);
+    const [quizStarted, setQuizStarted] = useState(false);
 
     useEffect(() => {
       socket.on("roomCreated", ({ roomID, inviteLink }) => {
@@ -19,6 +20,8 @@ export default function App() {
         setInviteLink(inviteLink);
         setPlayers([username]);  // Add the host to the players list
     });
+
+    socket.on("quizStarted", () => setQuizStarted(true));
 
         socket.on("userJoined", ({ players, totalPoints }) => {
             setPlayers(players);
@@ -100,6 +103,8 @@ export default function App() {
 
             {/* Start Quiz Button (Only Host Should Start) */}
             <button onClick={startQuiz}>Start Quiz</button>
+
+            {quizStarted &&  <Quiz socket={socket} roomID={roomID} onFinish={() => setQuizStarted(false)} />}
 
             {players && players.length > 0 && (
                 <button onClick={declareWinner} className="bg-red-500 text-white px-4 py-2 rounded mt-4">Declare Winner</button>
